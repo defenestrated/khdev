@@ -1,0 +1,36 @@
+/*
+Theme Name: Katie Henry - Main
+Description: custom theme for Katie Henry
+Author: Sam Galison
+
+*/
+
+
+
+
+body {
+	overflow:hidden;
+}
+
+#construction {
+	width: 100%;
+	text-align: center;
+	font-family: "Courier", Courier New, monospace;
+	color: #f00;
+	font-size: 14px;
+	letter-spacing: 2px;
+	overflow: hidden;
+}
+
+#logo {
+	position:relative;
+	width:100%;	
+	top: 5%;
+	}
+
+#logo img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	height:20%;
+}
