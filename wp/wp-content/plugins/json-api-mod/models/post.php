@@ -32,10 +32,20 @@ class JSON_API_Post {
   // custom taxonomies:
   var $parent_plays; // referenced plays (array)
   
-  // cpt:
+  // cpt's:
+  
+  // press
   var $prquote;
   var $prname;
   var $prsrc;
+  
+  // plays
+  var $blurb;
+  var $length;
+  var $cast;
+  var $publisher;
+  var $pub_link;
+  var $details;
   
   function JSON_API_Post($wp_post = null) {
     if (!empty($wp_post)) {
@@ -159,57 +169,32 @@ class JSON_API_Post {
     $this->set_value('comment_status', $wp_post->comment_status);
     $this->set_thumbnail_value();
     $this->set_custom_fields_value();
-    
-	
-	$parent = $wp_post->post_parent;
-	
-	$children = get_pages(array(
-		'child_of' => $wp_post->ID,
-		'post_type' => 'project'
-	));
-	
-	$jsonchildren;
-	
-	foreach($children as $child) {
-		$jsonchildren[] = new JSON_API_Post($child);
-	}
-	
-	$this->set_value('parent', $parent);
-	$this->set_value('children', ($jsonchildren !== null) ? $jsonchildren : 0);
-	
-    
 	
 	$args = array(
 		'fields' => 'names'
 	);
 	
-	$prquote = get_post_meta($this->id, 'press_quote', true);
-	$parent_plays = wp_get_object_terms($this->id, 'parent_plays', $args);
+/* ! -------- press post values -------- */
 	
+	$this->set_value('parent_plays', wp_get_object_terms($this->id, 'parent_plays', $args));
+	$this->set_value('prquote', get_post_meta($this->id, 'press_quote', true));
+	$this->set_value('prname', get_post_meta($this->id, 'press_name', true));
+	$this->set_value('prsrc', get_post_meta($this->id, 'press_src', true));
 	
-	$this->set_value('parent_plays', $parent_plays);
-	$this->set_value('prquote', $prquote);
-	
-/*
-	$hours = wp_get_object_terms($this->id, 'hours', $args);
-	$hours = floatval($hours[0]);
-	$materials = wp_get_object_terms($this->id, 'materials', $args);
-	$techniques = wp_get_object_terms($this->id, 'techniques', $args);
-    $dimensions = wp_get_object_terms($this->id, 'dimensions', $args);
-    $dimensions = floatval($dimensions[0]);
-    $scale = wp_get_object_terms($this->id, 'scale', $args);
-    $scale = floatval($scale[0]);
-    $reasons = wp_get_object_terms($this->id, 'reasons', $args);
-	
-    
-    $this->set_value('hours', $hours);
-    $this->set_value('materials', $materials);
-	$this->set_value('techniques', $techniques);
-    $this->set_value('dimensions', $dimensions);
-    $this->set_value('scale', $scale);
-    $this->set_value('reasons', $reasons);
-*/
-	
+/* ----------------------------------------	 */
+
+
+/* ! -------- play post values -------- */
+
+	$this->set_value('blurb',		get_post_meta($this->id, 'blurb', true)		);
+	$this->set_value('length',	get_post_meta($this->id, 'length', true)	);
+	$this->set_value('cast',		get_post_meta($this->id, 'cast', true)		);
+	$this->set_value('publisher',	get_post_meta($this->id, 'publisher', true)	);
+	$this->set_value('pub_link',	get_post_meta($this->id, 'pub_link', true)	);
+	$this->set_value('details',	get_post_meta($this->id, 'details', true)	);
+
+/* ---------------------------------------- */
+
   }
   
   function set_value($key, $value) {

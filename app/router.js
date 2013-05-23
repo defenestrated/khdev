@@ -68,7 +68,7 @@ function(app) {
 				callback(data, 'posts');
 			});
 			$.post("http://localhost/katiehenry/wp/?json=get_recent_posts&post_type='play'&count=0", function(data) {
-				callback(data, 'play');
+				callback(data, 'plays');
 			});
 			$.post("http://localhost/katiehenry/wp/?json=get_recent_posts&post_type='press'&count=0", function(data) {
 				callback(data, 'press');
