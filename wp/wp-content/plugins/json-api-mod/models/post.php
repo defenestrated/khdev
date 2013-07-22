@@ -187,11 +187,11 @@ class JSON_API_Post {
 /* ! -------- play post values -------- */
 
 	$this->set_value('blurb',		get_post_meta($this->id, 'blurb', true)		);
-	$this->set_value('length',	get_post_meta($this->id, 'length', true)	);
+	$this->set_value('length',		get_post_meta($this->id, 'length', true)	);
 	$this->set_value('cast',		get_post_meta($this->id, 'cast', true)		);
 	$this->set_value('publisher',	get_post_meta($this->id, 'publisher', true)	);
 	$this->set_value('pub_link',	get_post_meta($this->id, 'pub_link', true)	);
-	$this->set_value('details',	get_post_meta($this->id, 'details', true)	);
+	$this->set_value('details',		get_post_meta($this->id, 'details', true)	);
 
 /* ---------------------------------------- */
 
