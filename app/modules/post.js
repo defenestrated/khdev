@@ -17,6 +17,8 @@ function(app) {
 
   // Default Collection.
   Post.Collection = Backbone.Collection.extend({
+  	loaded: false,
+  	
     model: Post.Model
   });
 

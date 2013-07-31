@@ -4,3 +4,84 @@
 @import "../../vendor/h5bp/css/main.css";
 
 /*-- Application stylesheets. -----------------------------------------------*/
+
+
+/*!---- global stuff ----*/
+
+@font-face {
+	font-family: Roemisch;
+	src: url("../../assets/fonts/roem.otf");
+}
+@font-face {
+	font-family: Roemisch;
+	font-weight: bold;
+	src: url("../../assets/fonts/roemB.otf");
+}
+@font-face {
+	font-family: Roemisch;
+	font-style: italic;
+	src: url("../../assets/fonts/roemI.otf");
+}
+@font-face {
+	font-family: Roemisch;
+	font-weight: bold;
+	font-style: italic;
+	src: url("../../assets/fonts/roemBI.otf");
+}
+
+
+html {
+	background: url("../../assets/images/whitepaper_bw.png") no-repeat center center fixed; 
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+}
+
+.compass {
+	position: absolute;
+	width: 100%;
+	text-align: center;
+}
+
+.nav {
+	display: none;
+}
+
+.navlink {
+	font: italic bold 18px "Roemisch", "Times New Roman", serif;
+	letter-spacing: 0.2em;
+	padding: .5em 2.5em;
+}
+
+a {
+	color: #8A0808;
+	text-decoration: none;
+}
+a:hover {
+	color: black;
+	background: rgba(0,0,0,0.3);
+}
+
+/*!---- home stuff ----*/
+
+
+.logo {
+	position: absolute;
+	width: 100%;
+	bottom: 50%;
+	text-align: center;
+	display: none;
+	font: normal normal 24px Helvetica;
+	color: blue;
+}
+
+.homenav {
+	top: 55%;
+}
+
+/*!---- default stuff ----*/
+
+.defnav {
+	top: 55%;
+}
