@@ -58,9 +58,11 @@ a {
 	color: #8A0808;
 	text-decoration: none;
 }
-a:hover {
+a:hover, .navlink.currpage {
+	font-style: normal;
+	font-weight: normal;
 	color: black;
-	background: rgba(0,0,0,0.3);
+	background: rgba(0,0,0,0.1);
 }
 
 /*!---- home stuff ----*/

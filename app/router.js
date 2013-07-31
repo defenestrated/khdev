@@ -42,15 +42,19 @@ function(app, Post, Play, Press) {
 				  		]);
 			  		});
 			  		
+			  		
+			  		$("a.navlink").click(function () {
+			  			$("a.navlink").removeClass("currpage");
+						$(this).addClass("currpage");
+					});
+			  		
+			  		
 			  		$("." + this.className).fadeIn(2000);
 		  		}
 			});
 			
 			app.layouts.home = new Backbone.Layout({
 				template: "home",
-				beforeRender: function () {
-					// slide nav down if it exists
-				},
 				
 				afterRender: function () {
 					$(".logo").fadeIn(1000);
@@ -127,6 +131,7 @@ function(app, Post, Play, Press) {
 			// coming from onsite
 			$(".homenav").css("top", 0);
 			$(".compass").removeClass("defnav").addClass("homenav");
+			$("a.navlink").removeClass("currpage");
 			$(".homenav").animate({"top": "55%"}, 500, function () {
 				app.layouts.main.setView(".tupperware", app.layouts.home).render();
 			});
@@ -141,7 +146,7 @@ function(app, Post, Play, Press) {
 			});
 			$(document).ready(function () {
 				app.layouts.main.setView(".tupperware", app.layouts.home).render();
-			});	
+			});
 		}
 	},
 	
@@ -149,12 +154,8 @@ function(app, Post, Play, Press) {
 		var cmp = this;
 		console.log("showing page: " + page);
 		
-		if ($(".nav").length) shownav("move");
-		else {
-			app.layouts.nav.on("loaded", shownav("enter"));
-		}
-		
-		
+		if ($(".nav").length) shownav("move", showmeyour(page)); // coming from home
+		else app.layouts.nav.on("loaded", shownav("enter"), showmeyour()); // coming from the outside world
 		
 		function shownav(directive) {
 			if (_(app.layouts.nav.links).has(page)) {
@@ -164,11 +165,13 @@ function(app, Post, Play, Press) {
 				
 				if (directive == "move") {
 					// coming from home, slide nav
-					$(".logo").fadeOut(200, function () {
-						$(".logo").remove();
-						$(".compass").removeClass("homenav").addClass("defnav");
-						$(".defnav").animate({"top": 0}, 500);
-					});
+					if (!$(".defnav").length) {
+						$(".logo").fadeOut(200, function () {
+							$(".logo").remove();
+							$(".compass").removeClass("homenav").addClass("defnav");
+							$(".defnav").animate({"top": 0}, 500);
+						});
+					}
 				}
 				
 				else if (directive == "enter") {
@@ -177,13 +180,20 @@ function(app, Post, Play, Press) {
 						$(".compass").removeClass("homenav").addClass("defnav");
 					});
 				}
+				
+				callback();
 	    	}
+	    	
 	    	
 	    	else {
 	    		// incoming page parameter doesn't match anything in the nav links list
 	    		console.log("page doesn't exist, sending you home");
 	    		cmp.navigate("", {trigger: true});
     		}	
+		}
+		
+		function showmeyour(thing) {
+			
 		}
 	},
 	

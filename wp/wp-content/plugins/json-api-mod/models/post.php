@@ -25,6 +25,7 @@ class JSON_API_Post {
   var $comment_status;  // String ("open" or "closed")
   var $thumbnail;       // String
   var $custom_fields;   // Object (included by using custom_fields query var)
+  var $order;			// integer
   
   var $parent;			// object
   var $children;		// array
@@ -94,6 +95,10 @@ class JSON_API_Post {
       $wp_values['post_content'] = $values['content'];
     }
     
+    if (!empty($values['order'])) {
+	  $wp_values['menu_order'] = $values['order'];
+    }
+    
     if (!empty($values['author'])) {
       $author = $json_api->introspector->get_author_by_login($values['author']);
       $wp_values['post_author'] = $author->id;
@@ -152,6 +157,7 @@ class JSON_API_Post {
     setup_postdata($wp_post);
     $this->set_value('type', $wp_post->post_type);
     $this->set_value('slug', $wp_post->post_name);
+    $this->set_value('order', (int) $wp_post->menu_order);
     $this->set_value('url', get_permalink($this->id));
     $this->set_value('status', $wp_post->post_status);
     $this->set_value('title', get_the_title($this->id));
