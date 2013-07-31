@@ -79,10 +79,13 @@ function(app, Post, Play, Press) {
 							"title": page.title,
 							"slug": page.slug,
 							"content": page.content,
-							"attachments": page.attachments
+							"attachments": page.attachments,
+							"order": page.order
 						};
 						
 						if (ix == data.count - 1) {
+							console.log(app.layouts.nav.links);
+							app.layouts.nav.links = _(app.layouts.nav.links).sortBy(function (d) { return d.order; });
 							app.layouts.nav.trigger("loaded");
 						}
 					});
