@@ -27,18 +27,24 @@ function(app, Post, Play, Press) {
 			
 			app.layouts.main = new Backbone.Layout({
 				el: "body",
-				template: "main"
+				template: "main",
+				
+				afterRender: function () {
+					$(".copyright").fadeIn(3000);
+				}
 			});
 			app.layouts.main.render();
 				
 			app.layouts.nav = new Backbone.Layout({
 				className: "nav",
 		  		template: "nav",
+		  		isloaded: false,
+		  		
 		  		afterRender: function () {
 			  		var list = this.tagName + "." + this.className;
 			  		_(this.links).each(function (link) {
 				  		$(list).append([
-					  		"<a class='navlink' href='" + link.slug + "'>" + link.title + "</a>"
+					  		"<a class='navlink' id='" + link.slug + "' href='" + link.slug + "'>" + link.title + "</a>"
 				  		]);
 			  		});
 			  		
@@ -48,13 +54,16 @@ function(app, Post, Play, Press) {
 						$(this).addClass("currpage");
 					});
 			  		
-			  		
+			  		$("#" + Backbone.history.fragment).addClass("currpage");
 			  		$("." + this.className).fadeIn(2000);
 		  		}
 			});
 			
+			_.extend(app.layouts.nav, Backbone.Events);
+			
 			app.layouts.home = new Backbone.Layout({
 				template: "home",
+				className: "logo",
 				
 				afterRender: function () {
 					$(".logo").fadeIn(1000);
@@ -63,30 +72,29 @@ function(app, Post, Play, Press) {
 			});
 			
 			
-			
 			Router.getPosts(function (data, kind) {
 				
 				console.log(data, kind);
 						
 				if ( kind == "pages" ) {
-					app.layouts.nav.links = {};
+					app.layouts.nav.links = [];
 				
 					_.each(data.posts, function(page, ix) {
 						
-		/* 					Router.route(page.title, "showpage") */
 						// data manipulation of posts
-						app.layouts.nav.links[page.slug] = {
+						app.layouts.nav.links.push({
 							"title": page.title,
 							"slug": page.slug,
 							"content": page.content,
 							"attachments": page.attachments,
 							"order": page.order
-						};
+						});
 						
-						if (ix == data.count - 1) {
-							console.log(app.layouts.nav.links);
-							app.layouts.nav.links = _(app.layouts.nav.links).sortBy(function (d) { return d.order; });
-							app.layouts.nav.trigger("loaded");
+						if (ix == data.posts.length-1) {
+							app.layouts.nav.links = _(app.layouts.nav.links).sortBy("order");
+							var list = _(app.layouts.nav.links).map(function (d) { return d.slug; });
+							app.layouts.nav.isloaded = true;
+							app.layouts.nav.trigger("loaded", list);
 						}
 					});
 				}
@@ -135,14 +143,17 @@ function(app, Post, Play, Press) {
 			$(".homenav").css("top", 0);
 			$(".compass").removeClass("defnav").addClass("homenav");
 			$("a.navlink").removeClass("currpage");
-			$(".homenav").animate({"top": "55%"}, 500, function () {
-				app.layouts.main.setView(".tupperware", app.layouts.home).render();
+			$(".saranwrap").fadeOut(250, function () {
+				$(".saranwrap").remove();
+				$(".homenav").animate({"top": "55%"}, 500, function () {
+					app.layouts.main.setView(".tupperware", app.layouts.home).render();
+				});
 			});
 		}
 		
 		else {
 			// coming from offsite
-			app.layouts.nav.on("loaded", function () {
+			app.layouts.nav.on("loaded", function (list) {
 				app.layouts.main.setView(".compass", app.layouts.nav).render().done(function () {
 					$(".compass").addClass("homenav");
 				});
@@ -157,14 +168,25 @@ function(app, Post, Play, Press) {
 		var cmp = this;
 		console.log("showing page: " + page);
 		
-		if ($(".nav").length) shownav("move", showmeyour(page)); // coming from home
-		else app.layouts.nav.on("loaded", shownav("enter"), showmeyour()); // coming from the outside world
+		if (app.layouts.nav.isloaded) {
+			if ($(".nav").length) shownav("move"); // coming from home */
+			else shownav("enter"); // coming from the outside world
+		}
+		else {
+			app.layouts.nav.on("loaded", function (list) {
+				if ($(".nav").length) shownav("move"); // coming from home */
+				else shownav("enter"); // coming from the outside world
+			});
+		}
+		
+		
 		
 		function shownav(directive) {
-			if (_(app.layouts.nav.links).has(page)) {
+			var pagelist = _(app.layouts.nav.links).map(function (d) { return d.slug; });
+			console.log(pagelist);
+			if (_(pagelist).contains(page)) {
 				// incoming page parameter matches a real page
 				console.log("page " + page + " is real, and the directive is " + directive);
-				
 				
 				if (directive == "move") {
 					// coming from home, slide nav
@@ -172,52 +194,57 @@ function(app, Post, Play, Press) {
 						$(".logo").fadeOut(200, function () {
 							$(".logo").remove();
 							$(".compass").removeClass("homenav").addClass("defnav");
-							$(".defnav").animate({"top": 0}, 500);
+							$(".defnav").animate({"top": ".2em"}, 500, function () {
+								showmeyour(page);
+							});
 						});
 					}
+					else showmeyour(page);
 				}
 				
 				else if (directive == "enter") {
 					// coming from offsite, fade nav in
 					app.layouts.main.setView(".compass", app.layouts.nav).render().done(function () {
 						$(".compass").removeClass("homenav").addClass("defnav");
+						$(".defnav").css({"top": ".2em"});
+						showmeyour(page);
 					});
 				}
-				
-				callback();
 	    	}
 	    	
 	    	
 	    	else {
 	    		// incoming page parameter doesn't match anything in the nav links list
-	    		console.log("page doesn't exist, sending you home");
+	    		console.log("page doesn't exist, sending you home... directive was " + directive);
 	    		cmp.navigate("", {trigger: true});
     		}	
 		}
 		
 		function showmeyour(thing) {
+			console.log("showing you the " + thing);
+			
+			if (!$(".saranwrap").length) $(".tupperware").append([
+				"<div class='saranwrap'></div>"
+			]);
+			
+			if (thing == "news" || thing == "plays" || thing == "press") {
+				
+			}
+			
+			else {
+				var cmp = _(app.layouts.nav.links).where({ "slug": thing });
+				console.log("about to append " + cmp[0].slug);
+				$(".saranwrap").html("<div class='tinfoil'>" + cmp[0].content + "</div>");
+			}
+			
+			$(".saranwrap").fadeIn(250);
 			
 		}
 	},
 	
-	plays: function () {
-	    console.log("plays:");
-	    
-	    console.log(app.Plays.loaded);
-	    
-	/*
-	    while(app.Plays.loaded === false) {
-		    console.log("loading");
-	    }
-	*/
-	
-		_.each(app.Plays, function ( play ) {
-			console.log(play.get("title"));
-		});
-	},
-	
 	splat: function () {
 	    console.log("splattering");
+	    this.navigate("", {trigger: true});
 	}
 	
 	});
