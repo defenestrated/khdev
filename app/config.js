@@ -7,6 +7,8 @@ require.config({
 
   paths: {
     // Put paths here.
+    jquery: "../vendor/js/libs/jquery",
+    plugins: "../vendor/js/plugins"
   },
 
   shim: {

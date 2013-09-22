@@ -27,6 +27,8 @@ class JSON_API_Post {
   var $custom_fields;   // Object (included by using custom_fields query var)
   var $order;			// integer
   
+  var $gallery_images;	// array
+  
   var $parent;			// object
   var $children;		// array
 
@@ -175,6 +177,18 @@ class JSON_API_Post {
     $this->set_value('comment_status', $wp_post->comment_status);
     $this->set_thumbnail_value();
     $this->set_custom_fields_value();
+    
+    $gallery_urls = get_post_galleries_images( $this->id );
+    $gallery_urls = $gallery_urls[0];
+    $gallery_imageobjects = array();
+    
+    foreach($gallery_urls as $gurl) {
+    	$imgid = get_image_id_from_url($gurl);
+    	$fullimg = get_post($imgid);
+	    $gallery_imageobjects[] = $fullimg;
+    }
+    
+    $this->set_value('gallery_images', $gallery_imageobjects);
 	
 	$args = array(
 		'fields' => 'names'
@@ -297,7 +311,7 @@ class JSON_API_Post {
       return;
     }
     $thumbnail_size = $this->get_thumbnail_size();
-    list($thumbnail) = wp_get_attachment_image_src($attachment_id, $thumbnail_size);
+    list($thumbnail) = wp_get_attachment_image_src($attachment_id);
     $this->thumbnail = $thumbnail;
   }
   
