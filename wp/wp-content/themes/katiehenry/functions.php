@@ -166,7 +166,7 @@ foreach ( $attachments as $id => $attachment ) {
 /*     $link = isset($attr['link']) && 'file' == $attr['link'] ? wp_get_attachment_link($id, $size, false, false) : wp_get_attachment_link($id, $size, true, false); */
 	$link = wp_get_attachment_image( $id, $size );
     
-    $href = "galleries/" . $post->post_type . "/" . $post->post_name . "/" . $attachment->post_title;
+    $href = "galleries/" . $post->post_type . "/" . $post->post_name . "/" . $attachment->post_name;
     $output .= "<a href='" . $href . "'><{$itemtag} class='gthumb'>";
     $output .= "
         <{$icontag} class='gfill'>

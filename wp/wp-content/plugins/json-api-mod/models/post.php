@@ -182,11 +182,14 @@ class JSON_API_Post {
     $gallery_urls = $gallery_urls[0];
     $gallery_imageobjects = array();
     
-    foreach($gallery_urls as $gurl) {
-    	$imgid = get_image_id_from_url($gurl);
-    	$fullimg = get_post($imgid);
-	    $gallery_imageobjects[] = $fullimg;
+    if (is_array($gallery_urls)) {
+	    foreach($gallery_urls as $gurl) {
+	    	$imgid = get_image_id_from_url($gurl);
+	    	$fullimg = get_post($imgid);
+		    $gallery_imageobjects[] = $fullimg;
+	    }
     }
+    
     
     $this->set_value('gallery_images', $gallery_imageobjects);
 	
