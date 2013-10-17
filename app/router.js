@@ -76,9 +76,10 @@ function(app, Post, Play, Press) {
 		
 		afterRender: function () {
 			var cmp = this;
+			console.log("fodder:");
 			console.log(cmp.fodder);
 			
-			cmp.crimage = _(cmp.fodder).where({"post_name": cmp.startimg});
+			cmp.crimage = _(cmp.fodder).where({"slug": cmp.startimg});
 			
 /*
 			cmp.lineup(cmp.crimage.slug);
@@ -92,17 +93,19 @@ function(app, Post, Play, Press) {
 			console.log(cmp.crimage);
 			
 			cmp.$el.append([
-				"<div class='pbcontainer'>",
-					"<div class='primage'><p>previous</p></div>",
-					"<div class='crimage'></div>",
-					"<div class='nximage'><p>next</p></div>",
+				"<div class='pbcontainer'>" +
+					"<div class='primage'><p>previous</p></div>" +
+					"<div class='crimage'>"+
+						"<img src='" + cmp.crimage[0].images.large.url + "' />" +
+					"</div>" +
+					"<div class='nximage'><p>next</p></div>" +
 					"<div id='caption'>" +
-						"<div id='captiontitle'>" + cmp.crimage[0].post_title + "</div>" +
-						"<div id='captiondesc'>" + cmp.crimage[0].post_excerpt + "</div>" +
-					"</div>",
+						"<div id='captiontitle'>" + cmp.crimage[0].title + "</div>" +
+						"<div id='captiondesc'>" + cmp.crimage[0].caption + "</div>" +
+					"</div>" +
 				"</div>"
 			]);
-			console.log(cmp.crimage[0].post_title);
+			console.log(cmp.crimage[0].slug);
 			$("#captiontitle").append();
 			
 			
@@ -773,10 +776,8 @@ function(app, Post, Play, Press) {
 		function photobox() {
 			console.log("you asked for the " + gallery + " " + type + " gallery, specifically image '" + soloimg + "'.");
 			var post = _(app.Posts.models).find(function (d) { return d.get("slug") == gallery; });
-			
-			var entrees = post.get("gallery_images");
-			
-			console.log(entrees);
+
+			var entrees = post.get("attachments");
 			
 			app.pb = new app.Photobox({});
 			app.pb.startimg = soloimg;

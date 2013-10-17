@@ -166,6 +166,7 @@ a:hover, .navlink.currpage {
 	height: 100px;
 	float: left;
 	margin: 10px;
+	background-color: rgba(0,0,0,1);
 }
 
 .gfill {
@@ -174,7 +175,8 @@ a:hover, .navlink.currpage {
 	height: 100%;
 	left: 0;
 	top: 0;
-	background-color: rgba(0,0,0,0);
+	
+	overflow: hidden;
 }
 
 .gallery img {
@@ -251,7 +253,13 @@ a:hover, .navlink.currpage {
 	z-index: -2;
 	max-width: 500px;
 	max-height: 500px;
-	background: black;
+	background: grey;
+}
+
+.crimage img {
+	max-width: 100%;
+	max-height: 100%;
+	height: auto;
 }
 
 .nximage {
@@ -272,7 +280,7 @@ a:hover, .navlink.currpage {
 
 #captiondesc, #captiontitle {
 	color: black;
-	max-width: 500px;
+	max-width: 600px;
 	margin: 0 auto;
 }
 

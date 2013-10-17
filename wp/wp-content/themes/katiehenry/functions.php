@@ -102,7 +102,7 @@ extract(shortcode_atts(array(
     'icontag'    => 'div',
     'captiontag' => 'p',
     'columns'    => 3,
-    'size'       => array(100,100),
+    'size'       => array(200,200),
     'include'    => '',
     'exclude'    => ''
 ), $attr));
@@ -164,13 +164,17 @@ $output = apply_filters( 'gallery_style', $gallery_style . "\n\t\t" . $gallery_d
 $i = 0;
 foreach ( $attachments as $id => $attachment ) {
 /*     $link = isset($attr['link']) && 'file' == $attr['link'] ? wp_get_attachment_link($id, $size, false, false) : wp_get_attachment_link($id, $size, true, false); */
-	$link = wp_get_attachment_image( $id, $size );
+	$link = wp_get_attachment_image_src( $id );
     
     $href = "galleries/" . $post->post_type . "/" . $post->post_name . "/" . $attachment->post_name;
     $output .= "<a href='" . $href . "'><{$itemtag} class='gthumb'>";
     $output .= "
-        <{$icontag} class='gfill'>
-	        	$link
+        <{$icontag} class='gfill' style='background: url(\"". $link[0] ."\") no-repeat center center; 
+        -webkit-background-size: contain;
+        -moz-background-size: contain;
+        -o-background-size: contain;
+        background-size: contain;'>
+	        	
         </{$icontag}>";
     $output .= "</{$itemtag}></a>";
 /*
