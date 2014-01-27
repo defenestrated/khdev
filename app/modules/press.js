@@ -19,7 +19,13 @@ function(app) {
   Press.Collection = Backbone.Collection.extend({
   	loaded: false,
   	
-    model: Press.Model
+    model: Press.Model,
+    initialize: function () {
+	    this.on("loaded", function (list) {
+/* 		    alert("posts loaded:\n\n" + list); */
+		    this.isloaded = true;
+	    });
+    }
   });
 
   // Default View.

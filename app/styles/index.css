@@ -204,7 +204,7 @@ a:hover, .navlink.currpage {
 	height: 100%;
 	top: 0;
 	left: 0;
-	
+	z-index: 10;
 }
 
 .primage, .crimage, .nximage {
@@ -253,7 +253,6 @@ a:hover, .navlink.currpage {
 	z-index: -2;
 	max-width: 500px;
 	max-height: 500px;
-	background: grey;
 }
 
 .crimage img {
@@ -293,13 +292,32 @@ a:hover, .navlink.currpage {
 #captiondesc {
 	font: normal normal 18px/1.2em "Roemisch", "Times New Roman", serif;
 	letter-spacing: .1em;
-	text-align: left;
+	text-align: center;
 }
 
+#x {
+	position: absolute;
+	top: 0;
+	right: 0;
+	padding: 20px 50px;
+	text-align: right;
+	font: normal normal 80px "Roemisch", "Times New Roman", serif;
+	color: black;
+	z-index: 30;
+	
+	-webkit-transition:	all 		.4s ease-in-out;  
+   	-moz-transition:	all 		.4s ease-in-out;  
+   	-o-transition:		all		  	.4s ease-in-out;  
+   	transition:			all 		.4s ease-in-out;
+}
+
+#x:hover {
+	color: white;
+	text-shadow: 0px 0px 20px rgba(255,255,255,0.6);
+}
 
 /*!---- contact stuff ----*/
 .contact {
-	width: 100%;
 	margin-top: 50px;
 	text-align: center;
 }

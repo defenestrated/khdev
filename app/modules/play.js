@@ -19,7 +19,13 @@ function(app) {
   Play.Collection = Backbone.Collection.extend({
   	loaded: false,
   	
-    model: Play.Model
+    model: Play.Model,
+    initialize: function () {
+	    this.on("loaded", function (list) {
+		    alert("posts loaded:\n\n" + list);
+		    this.isloaded = true;
+	    });
+    }
   });
 
   // Default View.
