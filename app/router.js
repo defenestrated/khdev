@@ -653,8 +653,8 @@ define([
                        }
                    }
 
-                   function showmeyour(thing, callback) {
-                       // console.log("showing you the " + thing);
+                   function showmeyour(thing) {
+                       if (app.debug) console.log("showing you the " + thing);
 
                        if (!$(".saranwrap").length) $(".tupperware").append([
                            "<div class='saranwrap'></div>"
@@ -668,7 +668,13 @@ define([
                        });
 
                        function dealwithpages() {
+                           if ($(".saranwrap").hasClass("transformed") && thing !== "plays") {
+                               if (app.debug) console.log("resetting saran wrap");
+                               app.router.resetSaranWrap();
+                           }
+
                            $(".saranwrap").attr("class", "saranwrap " + thing);
+
 
                            var pageData, multi = false;
 
@@ -784,7 +790,7 @@ define([
                                }
 
                                if (ell.get("type") === "play" || ell.get("type") === "press") {
-                                   steak = "<div class='pcontent'>" + steak + "<p class='deets' id='" + ell.get("slug") + "'><a href='plays/" + ell.get("slug") + "'>details...</a><p></div>";
+                                   steak = "<div class='pcontent'><div class='meatycontent'>" + steak + "</div><p class='deets' id='" + ell.get("slug") + "'><a href='plays/" + ell.get("slug") + "'>details...</a><p></div>";
                                    }
                                else
                                    steak = "<div class='newscontent'>" + steak + "</div>";
@@ -794,7 +800,6 @@ define([
 
                                meal += "</div>";
                                $(".tinfoil").append(meal);
-
 
 
                                if (ell.get("attachments").length > 1) {
@@ -854,6 +859,8 @@ define([
                        var post = _(app.Posts.models).find(function (d) { return d.get("slug") == gallery; });
 
                        var entrees = post.get("attachments");
+                       // needs to be edited in the api -- should look for "gallery images," not "attachments"
+                       // and the "gallery images" need to be an array of the image objects in that post's gallery.
 
                        app.pb = new app.Photobox({
                            startimg : soloimg,
@@ -899,16 +906,41 @@ define([
 
                            if (theplay !== "all") {
                                // show single play
-                               if (app.debug) console.log("showing play: " + theplay);
+
+                               var playobj = checker;
+                               if (app.debug) console.log("showing play: ");
+                               if (app.debug) console.log(playobj.get("title"));
+
+                               var thisone = $("#" + theplay);
                                var others = $("#" + theplay).siblings();
+
+                               thisone.find(".meatycontent").append(
+                                   $("<div>").addClass("info").append(
+                                       $("<h3>").html("Length: " + playobj.get("length"))
+                                   ).append(
+                                       $("<h3>").html("Cast: " + playobj.get("cast"))
+                                   ).append(
+                                       $("<h3>").html("Publisher: <a target='_blank' href='" + playobj.get("pub_link") + "'>" + playobj.get("publisher") + "</a>")
+                                   ).append(
+                                       $("<div>").addClass("insidey-press").append(
+                                           $("<div>").addClass("header").append(
+                                               $("<h4>").html('Press for "' + playobj.get("title") + '"')
+                                           )
+                                       ).append(
+                                           $("<p>").html("...not implemented yet...")
+                                       )
+                                   ).append(
+                                       $("<p>").addClass("description").html(playobj.get("details"))
+                                   )
+                               );
+
                                others.animate({"opacity": "0.0001"},200, function() {
                                    $(this).css("display", "hidden");
                                    var ot = $("#" + theplay).offset().top;
-                                   $(".saranwrap").animate({
+                                   $(".saranwrap").addClass("transformed").animate({
                                        "margin-top": ot*-1 + $(window).height()*0.1 + "px"
                                    },500, "easeInOutCubic");
 
-                                   if (app.debug) console.log(ot);
                                    $(".deets a").html("back to the list of plays...").attr('href', 'plays/all');
                                });
                                $(".saranwrap").animate({
@@ -925,12 +957,7 @@ define([
                                    app.router.navigate("plays");
                                    $(".deets a").each(function() {
                                        $(this).html("details...").attr('href', "plays/" + $(this).parent().attr("id"));
-                                       $(".saranwrap").animate({
-                                           "background-color": "rgba(0,0,0,0.1)",
-                                           "width": "80%",
-                                           "left": "10%",
-                                           "margin-top" : 0
-                                       }, 200);
+                                       app.router.resetSaranWrap();
                                    });
                                });
                            }
@@ -941,6 +968,15 @@ define([
                        }
                    }
 
+               },
+
+               resetSaranWrap: function() {
+                   $(".saranwrap").removeClass("transformed").animate({
+                       "background-color": "rgba(0,0,0,0.1)",
+                       "width": "80%",
+                       "left": "10%",
+                       "margin-top" : 0
+                   }, 200);
                },
 
                splat: function () {

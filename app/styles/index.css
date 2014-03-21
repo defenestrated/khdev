@@ -39,8 +39,8 @@ html {
 }
 
 body {
-    font: italic bold 12px/1.2em "Roemisch", "Times New Roman", serif;
-	  letter-spacing: .2em;
+    font: normal normal 12px/1.2em "Roemisch", "Times New Roman", serif;
+	  letter-spacing: .05em;
 }
 
 .loading {
@@ -67,10 +67,11 @@ body {
 	position: absolute;
 	width: 100%;
 	text-align: center;
+  z-index: 1000;
 }
 
 .nav {
-	display: none;
+	  display: none;
 }
 
 .navlink {
@@ -402,6 +403,49 @@ form.contact textarea {
     margin: 0 50px;
 }
 
-.plays .deets {
+.pcontent .info h3, .pcontent .insidey-press h4 {
+    font-weight: normal;
+    font-size: 14pt;
+    letter-spacing: 0.05em;
     text-align: center;
+    padding: 0.5em 0;
+    margin: 0;
+}
+
+.pcontent .info h3 a {
+    font-style: italic;
+    letter-spacing: 0.02em;
+}
+
+.pcontent .info h3 a:hover {
+    background: none;
+    color: black;
+    text-decoration: underline;
+}
+
+.pcontent .insidey-press {
+    width: 80%;
+    margin-left: 10%;
+}
+
+.pcontent .insidey-press .header {
+    text-align: center;
+}
+
+.pcontent .insidey-press .header h4 {
+    display: inline-block;
+    margin-top: 20px;
+    border-bottom: 1px solid black;
+}
+
+.deets {
+    text-align: center;
+}
+
+.deets a {
+    font-size: 10pt;
+    font-weight: bold;
+    font-style: italic;
+    letter-spacing: 0.1em;
+    padding: 0.5em 1em;
 }
