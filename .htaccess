@@ -20,3 +20,6 @@ RewriteCond %{REQUEST_URI} !index
 
 # Redirect remaining requests to the index.html file
 RewriteRule (.*) index.html [NC,L]
+# BEGIN WordPress
+
+# END WordPress

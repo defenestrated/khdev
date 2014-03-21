@@ -31,11 +31,16 @@
 
 
 html {
-	background: url("../../assets/images/whitepaper_bw.jpg") no-repeat center center fixed; 
+	background: url("../../assets/images/whitepaper_bw.jpg") no-repeat center center fixed;
 	-webkit-background-size: cover;
 	-moz-background-size: cover;
 	-o-background-size: cover;
 	background-size: cover;
+}
+
+body {
+    font: italic bold 12px/1.2em "Roemisch", "Times New Roman", serif;
+	  letter-spacing: .2em;
 }
 
 .loading {
@@ -175,7 +180,7 @@ a:hover, .navlink.currpage {
 	height: 100%;
 	left: 0;
 	top: 0;
-	
+
 	overflow: hidden;
 }
 
@@ -217,18 +222,18 @@ a:hover, .navlink.currpage {
 	top: 0;
 	font: italic bold 18px/1.2em "Roemisch", "Times New Roman", serif;
 	cursor: pointer;
-	
-	-webkit-transition:background-color .3s ease-in-out;  
-   	-moz-transition:background-color 	.3s ease-in-out;  
-   	-o-transition:background-color		.3s ease-in-out;  
+
+	-webkit-transition:background-color .3s ease-in-out;
+   	-moz-transition:background-color 	.3s ease-in-out;
+   	-o-transition:background-color		.3s ease-in-out;
    	transition:background-color 		.3s ease-in-out;
 }
 
 .primage p, .nximage p {
 	margin: 0px 50px;
-	-webkit-transition:	color 		.3s ease-in-out;  
-   	-moz-transition:	color 		.3s ease-in-out;  
-   	-o-transition:		color		.3s ease-in-out;  
+	-webkit-transition:	color 		.3s ease-in-out;
+   	-moz-transition:	color 		.3s ease-in-out;
+   	-o-transition:		color		.3s ease-in-out;
    	transition:			color 		.3s ease-in-out;
 }
 
@@ -304,10 +309,10 @@ a:hover, .navlink.currpage {
 	font: normal normal 80px "Roemisch", "Times New Roman", serif;
 	color: black;
 	z-index: 30;
-	
-	-webkit-transition:	all 		.4s ease-in-out;  
-   	-moz-transition:	all 		.4s ease-in-out;  
-   	-o-transition:		all		  	.4s ease-in-out;  
+
+	-webkit-transition:	all 		.4s ease-in-out;
+   	-moz-transition:	all 		.4s ease-in-out;
+   	-o-transition:		all		  	.4s ease-in-out;
    	transition:			all 		.4s ease-in-out;
 }
 
@@ -360,7 +365,7 @@ form.contact input[type="submit"]:hover, form.contact input:focus, form.contact 
 }
 
 form.contact textarea {
-	
+
 }
 
 .contact.submitted p {
@@ -378,7 +383,7 @@ form.contact textarea {
 
 .meal h1 {
 	text-align: center;
-	font: normal bold 36px/0.1em "Roemisch", "Times New Roman", serif;
+	font: normal bold 36px/1em "Roemisch", "Times New Roman", serif;
 	letter-spacing: .07em;
 }
 
@@ -386,4 +391,16 @@ form.contact textarea {
 	text-align: center;
 	font: italic bold 13px "Roemisch", "Times New Roman", serif;
 	letter-spacing: .1em;
+}
+
+
+
+/*-------- plays --------*/
+
+.plays .pcontent {
+    margin: 0 50px;
+}
+
+.plays .deets {
+    text-align: center;
 }
