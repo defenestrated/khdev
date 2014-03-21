@@ -248,7 +248,34 @@ define([
            });
 
 
+           app.isloaded = function() {
 
+
+
+               try {
+                   // if (app.debug) {
+                   //     console.log("checking load status...");
+                   //     console.log("nav: " + app.layouts.nav.loaded);
+                   //     console.log("posts: " + app.Posts.loaded);
+                   //     console.log("plays: " + app.Plays.loaded);
+                   //     console.log("press: " + app.Press.loaded);
+                   // }
+                   if (app.layouts.nav.loaded && app.Posts.loaded && app.Plays.loaded && app.Press.loaded && app.docready) {
+                       // shit's loaded!
+                       if (app.debug) console.log("loading test passed, no errors");
+                       app.allready = true;
+                       app.trigger("allready");
+                       $(".loading").fadeOut(function () {
+                           $(".loading").remove();
+                       });
+                   }
+               } catch(error) {
+                   if (app.debug) console.log(error);
+                   setTimeout(app.isloaded, 50);
+               }
+
+
+           };
 
            /* _.extend(nugget, Backbone.Events); */
 
@@ -304,10 +331,11 @@ define([
 
                            var ispostgallery = Backbone.history.fragment.search("galleries/post");
                            var isplaygallery = Backbone.history.fragment.search("galleries/play");
+                           var isplaysubset = Backbone.history.fragment.search("plays/");
 
-                           if (ispostgallery != -1) currpage = "news";
-                           if (isplaygallery != -1) currpage = "plays";
-                           if (ispostgallery == -1 && isplaygallery == -1) currpage = Backbone.history.fragment;
+                           if (ispostgallery !== -1) currpage = "news";
+                           else if (isplaygallery !== -1 || isplaysubset !== -1) currpage = "plays";
+                           else if (ispostgallery === -1 && isplaygallery === -1) currpage = Backbone.history.fragment;
                            $("#" + currpage).addClass("currpage");
                            $("." + this.className).fadeIn(2000);
                        }
@@ -425,25 +453,6 @@ define([
                    });
 
                    app.layouts.contact = new CView({});
-
-                   app.isloaded = function() {
-                       /*
-                        if (app.debug) console.log("checking load status...");
-                        if (app.debug) console.log("nav: " + app.layouts.nav.loaded);
-                        if (app.debug) console.log("posts: " + app.Posts.loaded);
-                        if (app.debug) console.log("plays: " + app.Plays.loaded);
-                        if (app.debug) console.log("press: " + app.Press.loaded);
-                        */
-
-                       if (app.layouts.nav.loaded && app.Posts.loaded && app.Plays.loaded && app.Press.loaded && app.docready) {
-                           // shit's loaded!
-                           app.allready = true;
-                           app.trigger("allready");
-                           $(".loading").fadeOut(function () {
-                               $(".loading").remove();
-                           });
-                       }
-                   };
 
 
                    Router.getPosts(function (data, kind) {
@@ -644,7 +653,7 @@ define([
                        }
                    }
 
-                   function showmeyour(thing) {
+                   function showmeyour(thing, callback) {
                        // console.log("showing you the " + thing);
 
                        if (!$(".saranwrap").length) $(".tupperware").append([
@@ -711,13 +720,17 @@ define([
                            }
 
 
-                           $(".saranwrap").fadeIn(500, "easeOutQuad");
+                           $(".saranwrap").fadeIn(500, "easeOutQuad", function() {
+                               app.trigger("doneshowing");
+                           });
                        }
 
                        function showSinglePage(data) {
                            if (app.debug) console.log("::: showing single page with the following data :::");
                            if (app.debug) console.log(data);
                            if (app.debug) console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::");
+
+
                        }
 
                        function showMultiPostPage(data) {
@@ -771,7 +784,7 @@ define([
                                }
 
                                if (ell.get("type") === "play" || ell.get("type") === "press") {
-                                   steak = "<div class='pcontent'>" + steak + "<p class='deets'><a href='plays/" + ell.get("slug") + "'>details...</a><p></div>";
+                                   steak = "<div class='pcontent'>" + steak + "<p class='deets' id='" + ell.get("slug") + "'><a href='plays/" + ell.get("slug") + "'>details...</a><p></div>";
                                    }
                                else
                                    steak = "<div class='newscontent'>" + steak + "</div>";
@@ -795,11 +808,10 @@ define([
                                    postgallery.render();
                                }
 
+
                            });
 
                        } // end showMultiPostPage
-
-
 
 
                    }
@@ -854,23 +866,79 @@ define([
                },
 
                showsingleplay: function(theplay) {
+
                    if (app.allready) {
-                       startplayshit();
+                       if (!$(".plays").length) {
+                           app.router.showpage("plays");
+                           app.on("doneshowing", function() {
+                               if (app.debug) console.log("done already");
+                               startplayshit();
+                           });
+                       }
+                       else startplayshit();
                    }
                    else app.on("allready", function () {
-                       startplayshit();
+                       if (!$(".plays").length) {
+                           app.router.showpage("plays");
+                           app.on("doneshowing", function() {
+                               if (app.debug) console.log("done on trigger");
+                               startplayshit();
+                           });
+                       }
+                       else startplayshit();
                    });
 
                    function startplayshit() {
-                       var playlist = _(app.Plays.models).map(function (d) { return d.get("title"); });
-                       console.log(playlist);
-                       // if (theplay)
-                       var checker = _(app.Plays.models).findWhere({"slug": theplay});
-                       console.log("check: " + checker);
-                       console.log("showing play: " + theplay);
-                       $("#" + theplay).siblings().fadeOut();
-                       $(".saranwrap").animate({"background": "rgba(0,0,0,0)"}, 200);
-                       $(".deets a").html("back to the list of plays...").attr('href', 'plays');
+
+                       if (app.debug) console.log("play: " + theplay + ", playlist: ");
+                       if (app.debug) console.log(app.Plays.models);
+                       var checker = _(app.Plays.models).find(function(ell) { return ell.get("slug") === theplay; });
+
+                       if (typeof checker !== "undefined" || theplay === "all") {
+                           // this is actual play navigation
+
+                           if (theplay !== "all") {
+                               // show single play
+                               if (app.debug) console.log("showing play: " + theplay);
+                               var others = $("#" + theplay).siblings();
+                               others.animate({"opacity": "0.0001"},200, function() {
+                                   $(this).css("display", "hidden");
+                                   var ot = $("#" + theplay).offset().top;
+                                   $(".saranwrap").animate({
+                                       "margin-top": ot*-1 + $(window).height()*0.1 + "px"
+                                   },500, "easeInOutCubic");
+
+                                   if (app.debug) console.log(ot);
+                                   $(".deets a").html("back to the list of plays...").attr('href', 'plays/all');
+                               });
+                               $(".saranwrap").animate({
+                                   "background-color": "rgba(0,0,0,0)",
+                                   "width": "100%",
+                                   "left": "0px"
+                               }, 200);
+                           }
+                           else {
+                              // show all plays
+                               if (app.debug) console.log("showing all plays");
+                               $(".meal").css("visibility", "visible");
+                               $(".meal").animate({"opacity": 1},200, function() {
+                                   app.router.navigate("plays");
+                                   $(".deets a").each(function() {
+                                       $(this).html("details...").attr('href', "plays/" + $(this).parent().attr("id"));
+                                       $(".saranwrap").animate({
+                                           "background-color": "rgba(0,0,0,0.1)",
+                                           "width": "80%",
+                                           "left": "10%",
+                                           "margin-top" : 0
+                                       }, 200);
+                                   });
+                               });
+                           }
+                       }
+                       else {
+                           if (app.debug) console.log("no such play, bumping you to the list");
+                           app.router.navigate("plays", {trigger: true});
+                       }
                    }
 
                },

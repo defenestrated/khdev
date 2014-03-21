@@ -385,6 +385,7 @@ form.contact textarea {
 	text-align: center;
 	font: normal bold 36px/1em "Roemisch", "Times New Roman", serif;
 	letter-spacing: .07em;
+  padding: 0 50px;
 }
 
 .meal h2 {
