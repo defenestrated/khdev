@@ -510,6 +510,12 @@ define([
 
                            });
 
+                           _(app.Plays.models).each(function(play) {
+                               console.log(play);
+                               if (app.Press.loaded === true) play.findpresses();
+                               else app.Press.on("loaded", function() { play.findpresses(); });
+                           });
+
                            list = _(app.Plays.models).map(function (d) { return d.get("title"); });
                            app.Plays.trigger("loaded", list);
                            app.Plays.loaded = true;
@@ -521,6 +527,8 @@ define([
                                // data manipulation of posts
                                app.Press.add(new Press.Model(press));
                            });
+
+
 
                            list = _(app.Press.models).map(function (d) { return d.get("title"); });
                            app.Press.trigger("loaded", list);
@@ -669,7 +677,7 @@ define([
 
                        function dealwithpages() {
                            if ($(".saranwrap").hasClass("transformed") && thing !== "plays") {
-                               if (app.debug) console.log("resetting saran wrap");
+                               if (app.debug) console.log("looks like the saran wrap is transformed...");
                                app.router.resetSaranWrap();
                            }
 
@@ -752,7 +760,9 @@ define([
                            // });
                            // console.log(list);
 
-
+                           // if (app.currpage === "plays") {
+                           //     app.router.resetSaranWrap();
+                           // }
                            _(data.models).each(function (ell, ix) {
                                var sfx = function (d) {
                                    if (d.length == 2 && d.charAt(0) == "1") {
@@ -916,50 +926,92 @@ define([
 
                                thisone.find(".meatycontent").append(
                                    $("<div>").addClass("info").append(
-                                       $("<h3>").html("Length: " + playobj.get("length"))
+                                       function(){ if (playobj.get("length") !== "")
+                                                   return $("<h3>").html("Length: " + playobj.get("length"));
+                                                 }()
                                    ).append(
-                                       $("<h3>").html("Cast: " + playobj.get("cast"))
+                                       function(){ if (playobj.get("cast") !== "")
+                                                   return $("<h3>").html("Cast: " + playobj.get("cast"));
+                                                 }()
                                    ).append(
-                                       $("<h3>").html("Publisher: <a target='_blank' href='" + playobj.get("pub_link") + "'>" + playobj.get("publisher") + "</a>")
+                                       function(){
+                                           if (playobj.get("publisher") !== "")
+                                               return $("<h3>").html("Publisher: "+ function(){
+                                                   var pl;
+                                                   if (playobj.get("pub_link") !== "") {
+                                                       pl = "<a target='_blank' href='";
+                                                       pl += playobj.get("pub_link") + "'>";
+                                                       pl += playobj.get("publisher") + "</a>";
+                                                   }
+
+                                                   else {
+                                                       pl = playobj.get("publisher");
+                                                   }
+                                                   return pl;
+                                               }());
+                                       }()
                                    ).append(
-                                       $("<div>").addClass("insidey-press").append(
-                                           $("<div>").addClass("header").append(
-                                               $("<h4>").html('Press for "' + playobj.get("title") + '"')
-                                           )
-                                       ).append(
-                                           $("<p>").html("...not implemented yet...")
-                                       )
+                                       function() {
+                                           if (playobj.get("presses").length !== 0) {
+                                               return $("<div>").addClass("insidey-press").append(
+                                                   $("<div>").addClass("header").append(
+                                                       $("<h4>").html('Press for "' + playobj.get("title") + '"')
+                                                   )
+                                               ).append(
+                                                   $("<div>").addClass("press").append(
+                                                       _(playobj.get("presses")).map(function(pritem) {
+                                                           var nugget = $("<div>").addClass("press-item");
+                                                           nugget.append($("<p>").addClass("quote").html('"' + pritem.get("prquote") + '"'));
+                                                           nugget.append($("<p>").addClass("author").html("<a href='" + pritem.get("prsrc") + "' target='_blank'>&ndash; " + pritem.get("prname") + "</a>"));
+                                                           return nugget;
+                                                       })
+                                                   )
+                                               );
+                                           }
+                                       }()
                                    ).append(
-                                       $("<p>").addClass("description").html(playobj.get("details"))
+                                       function(){
+                                           if (playobj.get("details") !== "")
+                                               return $("<p>").addClass("description").html(playobj.get("details"));
+                                       }()
                                    )
                                );
+
+                               $(".info").slideDown(200);
 
                                others.animate({"opacity": "0.0001"},200, function() {
                                    $(this).css("display", "hidden");
                                    var ot = $("#" + theplay).offset().top;
                                    $(".saranwrap").addClass("transformed").animate({
                                        "margin-top": ot*-1 + $(window).height()*0.1 + "px"
-                                   },500, "easeInOutCubic");
+                                   }, 500, "easeInOutCubic");
 
                                    $(".deets a").html("back to the list of plays...").attr('href', 'plays/all');
                                });
                                $(".saranwrap").animate({
-                                   "background-color": "rgba(0,0,0,0)",
-                                   "width": "100%",
-                                   "left": "0px"
-                               }, 200);
+                                   "background-color": "rgba(0,0,0,0)"
+                               }, 100, function() {
+                                   $(this).animate({
+                                       "width": "100%",
+                                       "left": "0px"
+                                   }, 100);
+                               });
                            }
                            else {
                               // show all plays
                                if (app.debug) console.log("showing all plays");
                                $(".meal").css("visibility", "visible");
-                               $(".meal").animate({"opacity": 1},200, function() {
-                                   app.router.navigate("plays");
-                                   $(".deets a").each(function() {
-                                       $(this).html("details...").attr('href', "plays/" + $(this).parent().attr("id"));
-                                       app.router.resetSaranWrap();
-                                   });
+                               $(".meal").find($(".info")).slideUp(200, function() {
+                                   $(this).remove();
                                });
+                               $(".meal").animate({"opacity": 1},200, function() {
+
+                               });
+                               app.router.navigate("plays");
+                               $(".deets a").each(function() {
+                                   $(this).html("details...").attr('href', "plays/" + $(this).parent().attr("id"));
+                               });
+                               app.router.resetSaranWrap();
                            }
                        }
                        else {
@@ -971,12 +1023,24 @@ define([
                },
 
                resetSaranWrap: function() {
-                   $(".saranwrap").removeClass("transformed").animate({
-                       "background-color": "rgba(0,0,0,0.1)",
+                   if (app.debug) console.log("resetting saran wrap...");
+                   $(".saranwrap").animate({
                        "width": "80%",
-                       "left": "10%",
-                       "margin-top" : 0
-                   }, 200);
+                       "left": "10%"
+                   }, 100, function() {
+                       $(this).animate({
+                           "background-color": "rgba(0,0,0,0.1)",
+                           "margin-top" : 0
+                       }, 100);
+                       $("body").animate({
+                           "scrollTop": 0
+                       }, 100, function() {
+                           $(".saranwrap").removeClass("transformed");
+                       });
+                   });
+
+
+
                },
 
                splat: function () {

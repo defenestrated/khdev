@@ -192,7 +192,7 @@ function extrameta_save_postdata( $post_id ) {
 				}
 			}
 		}
-		
+
 		foreach ($playthings as $item) {
 			if ($item[0]) {
 				if ($item[1] === 'blurb') {

@@ -198,10 +198,12 @@ class JSON_API_Post {
 		'fields' => 'names'
 	);
 
+    $deets = apply_filters('the_content', get_post_meta($this->id, 'details', true));
+    /* $deets = get_post_galleries($deets); */
 /* ! -------- press post values -------- */
 
 	$this->set_value('parent_plays', wp_get_object_terms($this->id, 'parent_plays', $args));
-	$this->set_value('prquote', get_post_meta($this->id, 'press_quote', true));
+	$this->set_value('prquote', strip_tags(get_post_meta($this->id, 'press_quote', true)));
 	$this->set_value('prname', get_post_meta($this->id, 'press_name', true));
 	$this->set_value('prsrc', get_post_meta($this->id, 'press_src', true));
 
@@ -215,7 +217,7 @@ class JSON_API_Post {
 	$this->set_value('cast',		get_post_meta($this->id, 'cast', true)		);
 	$this->set_value('publisher',	get_post_meta($this->id, 'publisher', true)	);
 	$this->set_value('pub_link',	get_post_meta($this->id, 'pub_link', true)	);
-	$this->set_value('details',		apply_filters('the_content', get_post_meta($this->id, 'details', true)) );
+	$this->set_value('details',		$deets );
 
 /* ---------------------------------------- */
 
